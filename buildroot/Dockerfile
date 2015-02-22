@@ -18,8 +18,10 @@ RUN su -c "cd ~/openwrt && ./scripts/feeds update -a" openwrt \
 # Install Shadowsocks
 RUN SS_VERSION=`wget -O- "https://github.com/shadowsocks/shadowsocks-libev/releases/latest" | sed -n 's/^.*tag\/\(.*\)".*/\1/p'` \
 	&& wget "https://github.com/shadowsocks/shadowsocks-libev/archive/$SS_VERSION.tar.gz" -o ss.tar.gz \
-	&& su -c "tar -xf ss.tar.gz -C /home/openwrt/package" openwrt \
-	&& rm ss.tar.gz \
+	&& mkdir -p /home/openwrt/openwrt/package/shadowsocks-libev \
+	&& tar -xf ss.tar.gz -C /home/openwrt/openwrt/package/shadowsocks-libev --strip-components=1 \
+	&& chown -R openwrt.openwrt /home/openwrt/openwrt/package/shadowsocks-libev \
+	&& rm ss.tar.gz
 
 # Make config
 RUN su -c "cd ~/openwrt && make defconfig && make prereq" openwrt
